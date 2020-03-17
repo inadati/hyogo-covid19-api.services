@@ -17,8 +17,8 @@ func main() {
 
 	r.Use(cors.Middleware())
 
-	r.Handle("/", handler.Playground())
-	r.Handle("/query", handler.Graphql())
+	r.Handle("/playground", handler.Playground())
+	r.Handle("/", handler.Graphql())
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", env.AS_PORT)
 	log.Fatal(http.ListenAndServe(":"+env.AS_PORT, r))
