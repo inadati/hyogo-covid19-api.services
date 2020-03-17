@@ -35,8 +35,8 @@ services:
         links:
             - postgres:postgres
         restart: always
-        # ports:
-        #     - 8080:8080
+        ports:
+            - 8080:8080
 
     auto-db-write-job:
         build:
