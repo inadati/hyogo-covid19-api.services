@@ -10,7 +10,7 @@ import (
 )
 
 func Playground() http.HandlerFunc {
-	return playground.Handler("GraphQL playground", "/query")
+	return playground.Handler("GraphQL playground", "/")
 }
 
 func Graphql() *handler.Server {
