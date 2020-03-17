@@ -2,12 +2,14 @@ import os
 import requests
 import openpyxl as px
 import psycopg2
+import uuid
 from bs4 import BeautifulSoup
 import settings as env
 from servant import FileDownLoader, XlsDateToIsoConverter, OnsetDateProvider, IsRelationConverter
 
+
 def db_connect():
-    return psycopg2.connect(env.AS_GORM_SETUP)
+    return psycopg2.connect(env.AWJ_DB_CONNECT_SETUP)
 
 
 def main():
@@ -28,22 +30,23 @@ def main():
     with db_connect() as conn:
         with conn.cursor() as db:
 
-            infected_place_id = 0
             for irow in range(5, sheet.max_row - 1):
-                
-                infected_people_id = sheet.cell(row=irow, column=2).value
+
+                infected_people_id = uuid.uuid4()
+                infected_people_no = sheet.cell(row=irow, column=2).value
+
                 xdic = XlsDateToIsoConverter.Summon(sheet.cell(row=irow, column=3).value)
                 odp = OnsetDateProvider.Summon(sheet.cell(row=irow, column=9).value)
 
-                db.execute("SELECT EXISTS (SELECT * FROM infected_peoples WHERE id = %s)", (infected_people_id,))
+                db.execute("SELECT EXISTS (SELECT * FROM infected_peoples WHERE no = %s)", (infected_people_no,))
                 (is_exist_infected_people,) = db.fetchone()
 
-                
                 if not is_exist_infected_people:
                     db.execute("""
                         INSERT
                         INTO infected_peoples (
                             id,
+                            no,
                             confirmed_date,
                             age_group,
                             sex,
@@ -53,9 +56,10 @@ def main():
                             onset_date,
                             travel_history,
                             remarks
-                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """, (
-                        infected_people_id,
+                        str(infected_people_id),
+                        infected_people_no,
                         xdic.service(),
                         sheet.cell(row=irow, column=4).value,
                         sheet.cell(row=irow, column=5).value,
@@ -64,24 +68,28 @@ def main():
                         sheet.cell(row=irow, column=8).value,
                         odp.service(),
                         sheet.cell(row=irow, column=10).value,
-                        sheet.cell(row=irow, column=11).value,
+                        sheet.cell(row=irow, column=11).value
                     ))
-                    
+
+                    infected_place_no = 0
                     for icol in range(12, sheet.max_column - 1):
-                        infected_place_id += 1
+                        infected_place_id = uuid.uuid4()
+                        infected_place_no += 1
                         irc = IsRelationConverter.Summon(sheet.cell(row=irow, column=icol).value)
                         db.execute("""
                             INSERT
                             INTO infected_places (
                                 id,
+                                no,
                                 infected_people_id,
                                 name,
                                 is_relation
                             )
-                            VALUES (%s, %s, %s, %s);
+                            VALUES (%s, %s, %s, %s, %s);
                         """, (
-                            infected_place_id,
-                            infected_people_id,
+                            str(infected_place_id),
+                            infected_place_no,
+                            str(infected_people_id),
                             sheet.cell(row=4, column=icol).value,
                             irc.service()
                         ))
@@ -98,7 +106,7 @@ def main():
                         onset_date = %s,
                         travel_history = %s,
                         remarks = %s
-                        WHERE id = %s
+                        WHERE no = %s
                     """, (
                         xdic.service(),
                         sheet.cell(row=irow, column=4).value,
@@ -109,21 +117,21 @@ def main():
                         odp.service(),
                         sheet.cell(row=irow, column=10).value,
                         sheet.cell(row=irow, column=11).value,
-                        infected_people_id
+                        infected_people_no
                     ))
 
+                    infected_place_no = 0
                     for icol in range(12, sheet.max_column):
-                        infected_place_id += 1
+                        infected_place_no += 1
                         irc = IsRelationConverter.Summon(sheet.cell(row=irow, column=icol).value)
                         db.execute("""
                             UPDATE infected_places
                             SET is_relation = %s
-                            WHERE id = %s
+                            WHERE no = %s
                         """, (
                             irc.service(),
-                            infected_place_id
+                            infected_place_no
                         ))
-
 
 
 if __name__ == '__main__':

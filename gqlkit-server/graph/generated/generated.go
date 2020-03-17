@@ -48,6 +48,7 @@ type ComplexityRoot struct {
 		ID             func(childComplexity int) int
 		InfectedPlaces func(childComplexity int) int
 		Jurisdiction   func(childComplexity int) int
+		No             func(childComplexity int) int
 		Occupation     func(childComplexity int) int
 		OnsetDate      func(childComplexity int) int
 		Remarks        func(childComplexity int) int
@@ -61,6 +62,7 @@ type ComplexityRoot struct {
 		InfectedPeopleID func(childComplexity int) int
 		IsRelation       func(childComplexity int) int
 		Name             func(childComplexity int) int
+		No               func(childComplexity int) int
 	}
 
 	Query struct {
@@ -121,6 +123,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.InfectedPeople.Jurisdiction(childComplexity), true
+
+	case "InfectedPeople.no":
+		if e.complexity.InfectedPeople.No == nil {
+			break
+		}
+
+		return e.complexity.InfectedPeople.No(childComplexity), true
 
 	case "InfectedPeople.occupation":
 		if e.complexity.InfectedPeople.Occupation == nil {
@@ -192,6 +201,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.InfectedPlace.Name(childComplexity), true
 
+	case "InfectedPlace.no":
+		if e.complexity.InfectedPlace.No == nil {
+			break
+		}
+
+		return e.complexity.InfectedPlace.No(childComplexity), true
+
 	case "Query.readInfectedPeoples":
 		if e.complexity.Query.ReadInfectedPeoples == nil {
 			break
@@ -261,7 +277,8 @@ type Query {
 # }
 
 type InfectedPeople {
-    id: Int!
+    id: ID!
+    no: Int!
     confirmed_date: String!
     age_group: Int!
     sex: String!
@@ -275,7 +292,8 @@ type InfectedPeople {
 }
 
 type InfectedPlace{
-  id: Int!
+  id: ID!
+  no: Int!
   infected_people_id: String!
   name: String!
   is_relation: Boolean!
@@ -359,6 +377,40 @@ func (ec *executionContext) _InfectedPeople_id(ctx context.Context, field graphq
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InfectedPeople_no(ctx context.Context, field graphql.CollectedField, obj *model.InfectedPeople) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "InfectedPeople",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.No, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -733,6 +785,40 @@ func (ec *executionContext) _InfectedPlace_id(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _InfectedPlace_no(ctx context.Context, field graphql.CollectedField, obj *model.InfectedPlace) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "InfectedPlace",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.No, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2033,6 +2119,11 @@ func (ec *executionContext) _InfectedPeople(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "no":
+			out.Values[i] = ec._InfectedPeople_no(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "confirmed_date":
 			out.Values[i] = ec._InfectedPeople_confirmed_date(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -2107,6 +2198,11 @@ func (ec *executionContext) _InfectedPlace(ctx context.Context, sel ast.Selectio
 			out.Values[i] = graphql.MarshalString("InfectedPlace")
 		case "id":
 			out.Values[i] = ec._InfectedPlace_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "no":
+			out.Values[i] = ec._InfectedPlace_no(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2431,6 +2527,20 @@ func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v interf
 
 func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
 	res := graphql.MarshalBoolean(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
+	return graphql.UnmarshalID(v)
+}
+
+func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalID(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")

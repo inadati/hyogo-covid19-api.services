@@ -10,5 +10,6 @@ require (
 	github.com/jinzhu/gorm v1.9.12
 	github.com/joho/godotenv v1.3.0
 	github.com/lib/pq v1.1.1
+	github.com/segmentio/ksuid v1.0.2 // indirect
 	github.com/vektah/gqlparser/v2 v2.0.1
 )

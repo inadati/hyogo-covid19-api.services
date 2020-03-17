@@ -1,8 +1,8 @@
 import os
-# from dotenv import load_dotenv
-#
-# load_dotenv(verbose=True)
-# load_dotenv("../../.env")
+from dotenv import load_dotenv
+
+load_dotenv(verbose=True)
+load_dotenv("../../.env")
 
 FILE_NAME = "covid19.xlsx"
-AS_GORM_SETUP = os.environ.get("AS_GORM_SETUP").strip("\"")
+AWJ_DB_CONNECT_SETUP = os.environ.get("AWJ_DB_CONNECT_SETUP").strip("\"")

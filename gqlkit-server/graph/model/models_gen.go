@@ -3,7 +3,8 @@
 package model
 
 type InfectedPeople struct {
-	ID             int              `json:"id"`
+	ID             string           `json:"id"`
+	No             int              `json:"no"`
 	ConfirmedDate  string           `json:"confirmed_date"`
 	AgeGroup       int              `json:"age_group"`
 	Sex            string           `json:"sex"`
@@ -17,7 +18,8 @@ type InfectedPeople struct {
 }
 
 type InfectedPlace struct {
-	ID               int    `json:"id"`
+	ID               string `json:"id"`
+	No               int    `json:"no"`
 	InfectedPeopleID string `json:"infected_people_id"`
 	Name             string `json:"name"`
 	IsRelation       bool   `json:"is_relation"`

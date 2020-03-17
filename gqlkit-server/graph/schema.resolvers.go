@@ -21,9 +21,9 @@ func (r *queryResolver) ReadInfectedPeoples(ctx context.Context) ([]*model.Infec
 		return nil, fmt.Errorf(err.Error())
 	}
 
-	db.Order("id desc").Find(&r.infected_peoples)
+	db.Order("no desc").Find(&r.infected_peoples)
 	for _, infected_people := range r.infected_peoples {
-		db.Where("infected_people_id = ?", infected_people.ID).Order("id").Find(&infected_people.InfectedPlaces)
+		db.Where("infected_people_id = ?", infected_people.ID).Order("no").Find(&infected_people.InfectedPlaces)
 	}
 
 	return r.infected_peoples, nil
@@ -33,5 +33,3 @@ func (r *queryResolver) ReadInfectedPeoples(ctx context.Context) ([]*model.Infec
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }
-
-

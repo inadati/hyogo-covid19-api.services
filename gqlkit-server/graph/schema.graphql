@@ -10,7 +10,8 @@ type Query {
 # }
 
 type InfectedPeople {
-    id: Int!
+    id: ID!
+    no: Int!
     confirmed_date: String!
     age_group: Int!
     sex: String!
@@ -24,7 +25,8 @@ type InfectedPeople {
 }
 
 type InfectedPlace{
-  id: Int!
+  id: ID!
+  no: Int!
   infected_people_id: String!
   name: String!
   is_relation: Boolean!

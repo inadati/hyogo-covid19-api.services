@@ -4,7 +4,8 @@ datasource db {
 }
 
 model infected_peoples {
-    id             Int      @id
+    id             String   @default(cuid()) @id
+    no             Int
     confirmed_date DateTime
     age_group      Int
     sex            String
@@ -17,8 +18,9 @@ model infected_peoples {
 }
 
 model infected_places {
-    id                Int      @id
+    id                 String  @default(cuid()) @id
+    no                 Int
     infected_people_id String
-    name              String
-    is_relation       Boolean  @default(false)
+    name               String
+    is_relation        Boolean @default(false)
 }
