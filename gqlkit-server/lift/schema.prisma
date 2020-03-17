@@ -1,0 +1,24 @@
+datasource db {
+    provider = "postgresql"
+    url      = "postgresql://postgres:postgres@localhost:5432/postgres?schema=public"
+}
+
+model infected_peoples {
+    id             Int      @id
+    confirmed_date DateTime
+    age_group      Int
+    sex            String
+    jurisdiction   String
+    residence      String
+    occupation     String
+    onset_date     String
+    travel_history String
+    remarks        String
+}
+
+model infected_places {
+    id                Int      @id
+    infected_people_id String
+    name              String
+    is_relation       Boolean  @default(false)
+}

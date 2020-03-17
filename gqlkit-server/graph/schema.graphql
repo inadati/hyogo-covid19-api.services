@@ -1,0 +1,34 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Query {
+  readInfectedPeoples: [InfectedPeople!]!
+}
+
+# type Mutation {
+# }
+
+type InfectedPeople {
+    id: Int!
+    confirmed_date: String!
+    age_group: Int!
+    sex: String!
+    jurisdiction: String!
+    residence: String!
+    occupation: String!
+    onset_date: String!
+    travel_history: String!
+    remarks: String!
+    infected_places: [InfectedPlace!]!
+}
+
+type InfectedPlace{
+  id: Int!
+  infected_people_id: String!
+  name: String!
+  is_relation: Boolean!
+}
+
+
+

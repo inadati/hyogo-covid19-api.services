@@ -1,0 +1,1 @@
+*/3 * * * * /usr/local/bin/python /usr/src/script/main.py
