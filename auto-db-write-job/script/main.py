@@ -38,7 +38,7 @@ def main():
                 xdic = XlsDateToIsoConverter.Summon(sheet.cell(row=irow, column=3).value)
                 odp = OnsetDateProvider.Summon(sheet.cell(row=irow, column=9).value)
 
-                db.execute("SELECT EXISTS (SELECT * FROM infected_peoples WHERE no = %s)", (infected_people_no,))
+                db.execute("SELECT EXISTS (SELECT * FROM infected_peoples WHERE no = %s);", (infected_people_no,))
                 (is_exist_infected_people,) = db.fetchone()
 
                 if not is_exist_infected_people:
@@ -56,7 +56,7 @@ def main():
                             onset_date,
                             travel_history,
                             remarks
-                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
                     """, (
                         str(infected_people_id),
                         infected_people_no,
@@ -106,7 +106,7 @@ def main():
                         onset_date = %s,
                         travel_history = %s,
                         remarks = %s
-                        WHERE no = %s
+                        WHERE no = %s;
                     """, (
                         xdic.service(),
                         sheet.cell(row=irow, column=4).value,
@@ -120,6 +120,9 @@ def main():
                         infected_people_no
                     ))
 
+                    db.execute("SELECT id FROM infected_peoples WHERE no = %s;", (infected_people_no,))
+                    (infected_people_id,) = db.fetchone()
+
                     infected_place_no = 0
                     for icol in range(12, sheet.max_column):
                         infected_place_no += 1
@@ -127,10 +130,11 @@ def main():
                         db.execute("""
                             UPDATE infected_places
                             SET is_relation = %s
-                            WHERE no = %s
+                            WHERE no = %s AND infected_people_id = %s;
                         """, (
                             irc.service(),
-                            infected_place_no
+                            infected_place_no,
+                            infected_people_id
                         ))
 
 
