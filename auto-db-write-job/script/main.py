@@ -73,6 +73,8 @@ def main():
 
                     infected_place_no = 0
                     for icol in range(12, sheet.max_column - 1):
+                        if sheet.cell(row=4, column=icol).value is None:
+                            continue
                         infected_place_id = uuid.uuid4()
                         infected_place_no += 1
                         irc = IsRelationConverter.Summon(sheet.cell(row=irow, column=icol).value)
@@ -90,7 +92,7 @@ def main():
                             str(infected_place_id),
                             infected_place_no,
                             str(infected_people_id),
-                            sheet.cell(row=4, column=icol).value,
+                            sheet.cell(row=4, column=icol).value.replace("\n", ""),
                             irc.service()
                         ))
                 else:
@@ -125,14 +127,17 @@ def main():
 
                     infected_place_no = 0
                     for icol in range(12, sheet.max_column):
+                        if sheet.cell(row=4, column=icol).value is None:
+                            continue
                         infected_place_no += 1
                         irc = IsRelationConverter.Summon(sheet.cell(row=irow, column=icol).value)
                         db.execute("""
                             UPDATE infected_places
-                            SET is_relation = %s
+                            SET is_relation = %s, name = %s
                             WHERE no = %s AND infected_people_id = %s;
                         """, (
                             irc.service(),
+                            sheet.cell(row=4, column=icol).value.replace("\n", ""),
                             infected_place_no,
                             infected_people_id
                         ))
