@@ -93,4 +93,4 @@ sw.*
 gqlkit-server/lift/migrations/**/
 gqlkit-server/lift/migrations/lift.lock
 
-postgres
+# postgres
