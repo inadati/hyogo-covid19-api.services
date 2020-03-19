@@ -139,7 +139,6 @@ def main():
                     # infected_peoplesテーブルから感染者番号を元にidを取得
                     db.execute("SELECT id FROM infected_peoples WHERE no = %s;", (infected_people_no,))
                     (infected_people_id,) = db.fetchone()
-                    print("")
 
                     infected_place_no = 0
                     for icol in range(12, sheet.max_column):
